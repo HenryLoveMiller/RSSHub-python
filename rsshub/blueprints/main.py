@@ -662,3 +662,17 @@ def aia_press_releases():
     from rsshub.spiders.aia.press_releases import ctx
     return render_template('main/atom.xml', **filter_content(ctx()))
 
+
+@bp.route('/skillhub/skills')
+@cache.cached(timeout=3600, query_string=True)
+def skillhub_skills():
+    from flask import abort
+    import requests
+    from rsshub.spiders.skillhub.skills import ctx
+
+    try:
+        context = filter_content(ctx())
+    except (requests.RequestException, ValueError):
+        abort(502)
+    return render_template('main/atom.xml', **context)
+
